@@ -7,9 +7,12 @@ const mongoose  = require('mongoose')
 // Configuring .env
 process.env.NODE_ENV === 'development' && require('dotenv').config()
 const PORT      = process.env.PORT || 3001
+const DB_URL =  process.env.NODE_ENV === 'development' ?
+                "mongodb://localhost:27017/sky-surveys" :
+                process.env.DB_URL
 
 // Database configuration
-mongoose.connect(process.env.DB_URL,{
+mongoose.connect(DB_URL,{
     useNewUrlParser: true,
     useUnifiedTopology: true,
     // useCreateIndex: true,

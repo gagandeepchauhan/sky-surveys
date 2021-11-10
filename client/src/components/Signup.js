@@ -31,7 +31,10 @@ export default function Signup() {
 			const res = await signup({email,password,confirmPassword,userRole,name,age,gender,company})
 			setUserStatus({data:res.data})
 			setToast({title:'Success',desc:'successfully signed up!'})
-			history.push('/surveys')
+			if(res?.data?.userRole === 0)
+				history.push('/my-surveys')
+			else
+				history.push('/surveys')
 			console.log(res)
 		}catch(err){
 			setError(err)

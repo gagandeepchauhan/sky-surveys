@@ -16,6 +16,13 @@ module.exports = async (req,res,next)=>{
             	error: "SurveyId not found"
         	})
     	} 
+        let closingEpoch = new Date(surveyData.closingDate).getTime()
+        let currentEpoch = new Date().getTime()
+        if(currentEpoch>closingEpoch){
+            return res.status(400).json({
+                error: "This survey has been closed now for submissions"
+            })
+        }
     	if(surveyData.genders.includes(req.user.gender) && (surveyData.visibleToAllAgeGroup || inAgeGroup(req.user.age,surveyData.ageGroup))){
     		const submissionData = await Submission.findOne({respondent:req.user._id,survey:surveyId})  
     		if(submissionData){

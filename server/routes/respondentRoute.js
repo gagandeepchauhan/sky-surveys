@@ -11,11 +11,11 @@ router.use(authenticate,respondent)
 
 router.get("/surveys", async (req,res)=>{
 	try{
-		const surveys = await Survey.find({}).populate('User')
+		const surveys = await Survey.find({}).populate('coordinator').exec()
 		const data = surveys.filter(item=>{
 			return (item.genders.includes(req.user.gender) && (item.visibleToAllAgeGroup || inAgeGroup(req.user.age,item.ageGroup)))
 		}) 
-		const submissions = await Submission.find({respondent:req.user._id},{_id:1})
+		const submissions = await Submission.find({respondent:req.user._id})
 		return res.status(200).json({
 			surveys:data,
 			submissions
@@ -29,7 +29,7 @@ router.get("/surveys", async (req,res)=>{
 })	
 router.get("/my-submissions", async (req,res)=>{
 	try{
-		const submissions = await Submission.find({respondent:req.user._id}).populate('Survey').exec()
+		const submissions = await Submission.find({respondent:req.user._id}).populate('survey').exec()
 		return res.status(200).json({
 			data: submissions
 		})

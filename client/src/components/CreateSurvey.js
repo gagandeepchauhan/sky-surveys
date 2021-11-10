@@ -19,7 +19,7 @@ export default function CreateSurvey({survey,setEdit,edit}) {
 	const [visibleToAllAgeGroup,setVisibleToAllAgeGroup] = useState(survey?.visibleToAllAgeGroup ?? false)
 	const [closingDate,setClosingDate] = useState(survey?.closingDate ?? '')
 	const [loading,setLoading] = useState(false)
-	const [error,setError] = useState(null)
+	const [dateError,setDateError] = useState(null)
 	const [genderError,setGenderError] = useState(null)
 	const history = useHistory()
 
@@ -39,23 +39,35 @@ export default function CreateSurvey({survey,setEdit,edit}) {
 			setGenderError('Please check atleast one gender')
 			return
 		}
+		let closingEpoch = new Date(closingDate).getTime()
+    	let currentEpoch = new Date().getTime()
+    	if(currentEpoch>closingEpoch){
+    		setDateError("Please select some future date")
+    	    return 
+    	}
 		try{
 			setGenderError(null)
 			setLoading(true)
-			setError(null)
+			setDateError(null)
 			// console.log(JSON.stringify({title,description,ageGroup:{lb,ub},genders,questions,visibleToAllAgeGroup,closingDate},null,4))
 			if(edit){
-				const res = await editSurvey(survey._id,{title,description,ageGroup:{lb,ub},genders,questions,visibleToAllAgeGroup,closingDate})
-				setToast({title:'Success',desc:'Survey edited successfully'})
-				window.location.href = `/view-survey/${survey._id}`
+				let sure = true
+				if(survey?.submissions?.length!==0){
+					sure = window.confirm("Saving the changes would delete all submissions on this survey till now??")
+					console.log(sure)
+				}
+				if(sure){
+					const res = await editSurvey(survey._id,{title,description,ageGroup:{lb,ub},genders,questions,visibleToAllAgeGroup,closingDate})
+					setToast({title:'Success',desc:'Survey edited successfully'})
+					window.location.href = `/view-survey/${survey._id}`
+				}
 				// setEdit(false)
 			}else{
 				const res = await createSurvey({title,description,ageGroup:{lb,ub},genders,questions,visibleToAllAgeGroup,closingDate})
 				setToast({title:'Success',desc:'Survey published successfully'})
-				history.push('/surveys')
+				history.push('/my-surveys')
 			}
 		}catch(err){
-			setError(err)
 			setToast({title:'Error',desc:err?.response?.data?.error ?? err.toString()})
 			console.log(err?.response?.data?.error)
 		}
@@ -139,6 +151,9 @@ export default function CreateSurvey({survey,setEdit,edit}) {
 						type="date"
 						onChange={({target})=>setClosingDate(target.value)} 
 					/>
+					{dateError && 
+						<small className="text-danger">{dateError}</small>
+					}
 				</Form.Group>
 				<Form.Group className="mb-3">
 					<Form.Label className="sec-color-text">Gender*</Form.Label>

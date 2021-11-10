@@ -35,14 +35,25 @@ export default function ApiProvider({children}) {
 		return api.delete(`/app-survey/delete-survey/${surveyId}`,headConfig)
 	}
 	// respondent api
-	
+	function getSurveys(){
+		return api.get(`/app-submission/surveys`,headConfig)
+	}
+	function createSubmission(surveyId,data){ 
+		return api.post(`/app-submission/create-submission/${surveyId}`,data,headConfig)
+	}
+	function getMySubmissions(){
+		return api.get(`/app-submission/my-submissions`,headConfig)
+	}
 
 	const data = {
 		createSurvey,
 		editSurvey,
 		getMySurveys,
 		getSurvey,
-		deleteSurvey
+		deleteSurvey,
+		getSurveys,
+		createSubmission,
+		getMySubmissions
 	}
 
 	return (

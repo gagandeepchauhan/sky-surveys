@@ -107,7 +107,9 @@ router.get('/reset-password/:token',async (req,res)=>{ // verifyPasswordResetTok
                 error: "Invalid token provided"
             })
         }
-        return res.status(200)
+        return res.status(200).json({
+            success:true
+        })
     }catch(err){
         console.log(err.message)
         return res.status(500).json({
@@ -135,8 +137,12 @@ router.post('/reset-password',async (req,res)=>{ // changePassword
                 error: "Invalid token provided"
             })
         }
-        await User.findOneAndUpdate({email:tokenData.email},{$set:{password}})
-        return res.status(200)
+        const user = await User.findOne({email:tokenData.email})
+        user.password = password
+        await user.save()
+        return res.status(200).json({
+            success:true
+        })
     }catch(err){
         console.log(err.message)
         return res.status(500).json({

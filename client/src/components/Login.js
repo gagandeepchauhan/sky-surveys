@@ -20,7 +20,10 @@ export default function Login() {
 			const res = await login({email,password})
 			setUserStatus({data:res.data})
 			setToast({title:'Success',desc:'successfully logged in!'})
-			history.push('/surveys')
+			if(res?.data?.userRole === 0)
+				history.push('/my-surveys')
+			else
+				history.push('/surveys')
 			console.log(res)
 		}catch(err){
 			setError(err)

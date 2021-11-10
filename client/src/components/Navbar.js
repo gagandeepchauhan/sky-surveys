@@ -17,7 +17,7 @@ export default function Navbar() {
 
 	return (
 		<div className="nav">
-			<Link to="/surveys">
+			<Link to={`${isCoordinator() ? '/my-surveys' : '/surveys'}`}>
 				<div className="logo">
 					Sky<span className="prime-color-text">Surveys</span>
 				</div>
@@ -27,7 +27,7 @@ export default function Navbar() {
 					{isLoggedIn() ?
 						<>
 							{isCoordinator() &&
-								<Link className='nav-item' to="/create-survey">Publish a survey</Link>
+								<Link className='nav-item' to="/create-survey">Publish</Link>
 							}
 							<Avatar name={userStatus?.data?.name} imgSrc={null} />
 
